@@ -12,7 +12,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.user.state.R;
+import com.example.user.state.ListOverview;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,7 +29,6 @@ import java.util.Scanner;
  */
 public class ListOverview extends AppCompatActivity {
 
-    TextView titleText;
     EditText todoEdit;
     ListView todoListview;
     Button addButton;
@@ -41,7 +40,7 @@ public class ListOverview extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_list_overview);
 
         // Set a new ArrayList upon opening the app
         todoArraylist = new ArrayList<>();

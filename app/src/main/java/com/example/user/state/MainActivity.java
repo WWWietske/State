@@ -10,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.user.state.R;
@@ -31,6 +32,7 @@ public class MainActivity extends AppCompatActivity {
     EditText todoEdit;
     ListView todoListview;
     Button addButton;
+    TextView titleText;
 
     ArrayList<String> listsArraylist;
     ArrayAdapter adapter;
@@ -46,10 +48,11 @@ public class MainActivity extends AppCompatActivity {
         // Try to open the saved todos and fill the arraylist with it
         open();
 
-        // Initialize listview, edittext and button
+        // Initialize listview, edittext, textview and button
         todoListview = (ListView) findViewById(R.id.todoListview);
         todoEdit = (EditText) findViewById(R.id.todoEdit);
         addButton = (Button) findViewById(R.id.addButton);
+        titleText = (TextView) findViewById(R.id.titleText);
 
         // Initialize adapter
         adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listsArraylist);
@@ -120,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
      */
     public void listener(){
 
-        // OnItemLongClickListener to delete item by clicking on it
+        // OnItemLongClickListener to delete list by clicking on it
         todoListview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
