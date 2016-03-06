@@ -1,5 +1,7 @@
-package com.example.user.lists;
+package com.example.user.state;
 
+import android.content.Context;
+import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -8,6 +10,7 @@ import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Toast;
 
 import com.example.user.state.R;
 
@@ -21,9 +24,9 @@ import java.util.Scanner;
 
 /**
  * Wietske Dotinga - 10781889
- * Todolist app with one screen. Todos can be added and can later be deleted with a longclick.
- * Using ArrayAdapter to add and delete todos from the listview. Arraylist is saved with
- * prinstream in a text file.
+ * Todolist app with multiple lists of todos. The first screen shows the lists of todos and
+ * allows the user to add a new list. The ListOverview activity shows a todolist when openend
+ * by the user.
  */
 public class MainActivity extends AppCompatActivity {
 
@@ -31,7 +34,7 @@ public class MainActivity extends AppCompatActivity {
     ListView todoListview;
     Button addButton;
 
-    ArrayList<String> todoArraylist;
+    ArrayList<String> listsArraylist;
     ArrayAdapter adapter;
 
     @Override
@@ -40,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         // Set a new ArrayList upon opening the app
-        todoArraylist = new ArrayList<>();
+        listsArraylist = new ArrayList<>();
 
         // Try to open the saved todos and fill the arraylist with it
         open();
@@ -51,24 +54,13 @@ public class MainActivity extends AppCompatActivity {
         addButton = (Button) findViewById(R.id.addButton);
 
         // Initialize adapter
-        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, todoArraylist);
+        adapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, listsArraylist);
         todoListview.setAdapter(adapter);
 
         // Set onclicklistener for the button
         addButton.setOnClickListener(buttonClicked);
 
-        // OnItemLongClickListener to delete item by clicking on it
-        todoListview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-
-                // Delete the item from the arraylist
-                todoArraylist.remove(position);
-                adapter.notifyDataSetChanged();
-                write();
-                return true;
-            }
-        });
+        listener();
     }
 
     View.OnClickListener buttonClicked = new View.OnClickListener() {
@@ -76,44 +68,85 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
 
             // Add the text from the edittext into the arraylist of todos
-            String todoText = todoEdit.getText().toString();
-            todoArraylist.add(todoText);
+            String nameText = todoEdit.getText().toString();
+            listsArraylist.add(nameText);
             adapter.notifyDataSetChanged();
             todoEdit.setText("");
             write();
         }
     };
 
-
-    // Open saved file if any
+    /**
+     * Open saved file of list names if any
+     */
     public void open(){
 
         // Try to open the file
         try {
-            Scanner scan = new Scanner(openFileInput("todolist.txt"));
+            Scanner scan = new Scanner(openFileInput("lists.txt"));
             while (scan.hasNextLine()) {
                 String line = scan.nextLine();
-                todoArraylist.add(line);
+                listsArraylist.add(line);
             }
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
     }
 
-    // Write the arraylist items to file
+    /**
+     * Write the names of the lists to file
+     */
     public void write(){
 
         // Try to create and write to the file
         try {
-            PrintStream out = new PrintStream(openFileOutput("todolist.txt", MODE_PRIVATE));
+            PrintStream out = new PrintStream(openFileOutput("lists.txt", MODE_PRIVATE));
 
             // Write every line to the file
-            for (int i = 0; i < todoArraylist.size(); i++) {
-                out.println(todoArraylist.get(i));
+            for (int i = 0; i < listsArraylist.size(); i++) {
+                out.println(listsArraylist.get(i));
             }
             out.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Listener function that contains on item click listener for the listview elements.
+     */
+    public void listener(){
+
+        // OnItemLongClickListener to delete item by clicking on it
+        todoListview.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
+            @Override
+            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
+
+                // Delete the item from the arraylist
+                listsArraylist.remove(position);
+                adapter.notifyDataSetChanged();
+                write();
+                return true;
+            }
+        });
+
+        todoListview.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+                // Find out what list was clicked
+                String todoListName = listsArraylist.get(position);
+
+                // Pass the name of the todolist to the other activity using intent
+                Intent intent = new Intent(MainActivity.this, ListOverview.class);
+                intent.putExtra("listName", todoListName);
+                startActivity(intent);
+
+                // TODO dit weghalen, want test ding enzo
+                Context context = getApplicationContext();
+                Toast toast = Toast.makeText(context, todoListName, Toast.LENGTH_SHORT);
+                toast.show();
+            }
+        });
     }
 }
