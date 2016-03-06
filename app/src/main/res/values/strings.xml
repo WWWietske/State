@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">State</string>
+    <string name="todo">Long click to delete item.</string>
+    <string name="addButton">Add</string>
+</resources>
