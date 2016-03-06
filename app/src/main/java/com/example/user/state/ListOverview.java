@@ -140,4 +140,22 @@ public class ListOverview extends AppCompatActivity {
             }
         });
     }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // Store text from the edittext
+        String editText = todoEdit.getText().toString();
+        outState.putString("edit", editText);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Receive text from the edittext
+        String editText = savedInstanceState.getString("edit");
+        todoEdit.setText(editText);
+    }
 }

@@ -1,6 +1,5 @@
 package com.example.user.state;
 
-import android.content.Context;
 import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -11,9 +10,6 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
-
-import com.example.user.state.R;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -29,7 +25,7 @@ import java.util.Scanner;
  */
 public class MainActivity extends AppCompatActivity {
 
-    EditText todoEdit;
+    EditText listEdit;
     ListView todoListview;
     Button addButton;
     TextView titleText;
@@ -50,7 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Initialize listview, edittext, textview and button
         todoListview = (ListView) findViewById(R.id.todoListview);
-        todoEdit = (EditText) findViewById(R.id.todoEdit);
+        listEdit = (EditText) findViewById(R.id.todoEdit);
         addButton = (Button) findViewById(R.id.addButton);
         titleText = (TextView) findViewById(R.id.titleText);
 
@@ -69,10 +65,10 @@ public class MainActivity extends AppCompatActivity {
         public void onClick(View v) {
 
             // Add the text from the edittext into the arraylist of todos
-            String nameText = todoEdit.getText().toString();
+            String nameText = listEdit.getText().toString();
             listsArraylist.add(nameText);
             adapter.notifyDataSetChanged();
-            todoEdit.setText("");
+            listEdit.setText("");
             write();
 
             // Pass the name of the todolist to the other activity using intent
@@ -162,5 +158,23 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        // Store text from the edittext
+        String editText = listEdit.getText().toString();
+        outState.putString("edit", editText);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        // Receive text from the edittext
+        String editText = savedInstanceState.getString("edit");
+        listEdit.setText(editText);
     }
 }
