@@ -20,8 +20,6 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Scanner;
 
-// TODO listview met fragment voor de todos gebruiken? Dan kan je dat deel gewoon steeds hergebruiken ofzo.
-
 /**
  * Wietske Dotinga - 10781889
  * Todolist app with multiple lists of todos. The first screen shows the lists of todos and
@@ -73,6 +71,11 @@ public class MainActivity extends AppCompatActivity {
             adapter.notifyDataSetChanged();
             todoEdit.setText("");
             write();
+
+            // Pass the name of the todolist to the other activity using intent
+            Intent intent = new Intent(MainActivity.this, ListOverview.class);
+            intent.putExtra("listName", nameText);
+            startActivity(intent);
         }
     };
 
@@ -122,10 +125,23 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
 
+                // Find out what list was clicked
+                String todoListName = listsArraylist.get(position);
+
+                // Change title of list into a .txt file title
+                assert todoListName != null;
+                String todoTitle = todoListName.replace(" ", "_") + ".txt";
+
+                // Find file and delete it
+                File dir = getFilesDir();
+                File file = new File(dir, todoTitle);
+                boolean deleted = file.delete();
+
                 // Delete the item from the arraylist
                 listsArraylist.remove(position);
                 adapter.notifyDataSetChanged();
                 write();
+
                 return true;
             }
         });
@@ -141,12 +157,12 @@ public class MainActivity extends AppCompatActivity {
                 Intent intent = new Intent(MainActivity.this, ListOverview.class);
                 intent.putExtra("listName", todoListName);
                 startActivity(intent);
-
-                // TODO dit weghalen, want test ding enzo
-                Context context = getApplicationContext();
-                Toast toast = Toast.makeText(context, todoListName, Toast.LENGTH_SHORT);
-                toast.show();
             }
         });
+    }
+
+    public void delete(){
+
+
     }
 }
